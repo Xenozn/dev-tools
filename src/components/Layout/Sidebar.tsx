@@ -56,7 +56,7 @@ export default function Sidebar() {
             {/* Footer */}
             <div className="p-6 border-t border-[#1f1f1f]">
                 <p className="text-xs text-gray-600 text-center">
-                    Made with ❤️ by Xenozn
+                    Made with ❤️ by Xenozn_
                 </p>
             </div>
         </aside>
