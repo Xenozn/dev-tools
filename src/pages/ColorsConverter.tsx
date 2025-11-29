@@ -1,113 +1,89 @@
-import { useEffect, useState } from "react";
-import {generateToken} from "../utils/tokengenerator.ts";
-import Toggle from "../components/Toggle.tsx";
-import { toast } from 'react-toastify';
+import { useState, useMemo } from "react";
+import { toast } from "react-toastify";
+import { ColorPicker } from 'antd';
+import {
+    hexToRgba, rgbaToString, stringToRgba,
+    hslToHex, hexToHsl,
+    cmykToHex, hexToCmyk,
+    hsvToHex, hexToHsv, parseHsvString, parseCmykString, parseHslString, parseHexString, rgbaToHex
+} from "../utils/colorsconverter.ts";
+
+export default function ColorsConverter() {
+    const [colorHex, setColorHex] = useState("#ffffff");
+
+    const conversions = useMemo(() => ({
+        HEX: colorHex.toUpperCase(),
+        RGBA: rgbaToString(hexToRgba(colorHex)),
+        HSL: (() => {
+            const { h,s,l } = hexToHsl(colorHex);
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        })(),
+        CMYK: (() => {
+            const {c,m,y,k} = hexToCmyk(colorHex);
+            return `cmyk(${c}%, ${m}%, ${y}%, ${k}%)`;
+        })(),
+        HSV: (() => {
+            const {h,s,v} = hexToHsv(colorHex);
+            return `hsv(${h}, ${s}%, ${v}%)`;
+        })()
+    }), [colorHex]);
+
+    const handleChange = (format: string, value: string) => {
+        try {
+            let hex = colorHex;
+            if(format==="HEX") hex = parseHexString(value);
+            else if(format==="RGBA") {
+                const rgba = stringToRgba(value);
+                hex = rgbaToHex(rgba);
+            }
+            else if(format==="HSL") hex = hslToHex(parseHslString(value));
+            else if(format==="CMYK") hex = cmykToHex(parseCmykString(value));
+            else if(format==="HSV") hex = hsvToHex(parseHsvString(value));
+
+            setColorHex(hex);
+        } catch(e) {
+            toast.error("Format invalide");
+        }
+    };
 
 
-export default function TokenGenerator() {
-    const [uppercase, setUppercase] = useState(true);
-    const [lowercase, setLowercase] = useState(true);
-    const [numbers, setNumbers] = useState(true);
-    const [symbols, setSymbols] = useState(false);
-    const [length, setLength] = useState(128);
-
-    const [result, setResult] = useState("");
-
-    useEffect(() => {
-        const token = generateToken({
-            uppercase,
-            lowercase,
-            numbers,
-            symbols,
-            length,
-        });
-
-        setResult(token);
-    }, [uppercase, lowercase, numbers, symbols, length]);
+    const copyToClipboard = (value:string, format:string)=>{
+        navigator.clipboard.writeText(value);
+        toast.success(`${format} copié !`);
+    }
 
     return (
-        <div className="max-w-4xl space-y-8 bg-[#131313] p-8 border border-[#1f1f1f]">
+        <div className="max-w-md mx-auto p-6 bg-[#111] border border-[#1b1b1b] rounded-2xl shadow-xl space-y-6">
+            <h2 className="text-xl font-semibold text-white">Convertisseur bidirectionnel</h2>
 
-            {/* Toggles */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Toggle
-                    label="Uppercase (ABC...)"
-                    enabled={uppercase}
-                    setEnabled={setUppercase}
+            <div className="flex items-center gap-4">
+                <ColorPicker
+                    value={colorHex}
+                    onChange={(c) => setColorHex(c.toHexString())}
+                    disabledAlpha
                 />
-
-                <Toggle
-                    label="Numbers (123...)"
-                    enabled={numbers}
-                    setEnabled={setNumbers}
-                />
-
-                <Toggle
-                    label="Lowercase (abc...)"
-                    enabled={lowercase}
-                    setEnabled={setLowercase}
-                />
-
-                <Toggle
-                    label="Symbols (!-;...)"
-                    enabled={symbols}
-                    setEnabled={setSymbols}
-                />
+                <div className="text-white text-lg">{colorHex.toUpperCase()}</div>
             </div>
 
-            {/* Length */}
-            <div className="space-y-2">
-                <p className="text-gray-400">Length ({length})</p>
+            <div
+                className="w-full h-20 rounded-xl border border-[#222]"
+                style={{ backgroundColor: conversions.RGBA }}
+            ></div>
 
-                <input
-                    type="range"
-                    min={1}
-                    max={512}
-                    value={length}
-                    onChange={(e) => setLength(Number(e.target.value))}
-                    className="w-full accent-green-500"
-                />
-            </div>
-
-            {/* Result */}
-            <textarea
-                value={result}
-                readOnly
-                className="
-          w-full h-32 resize-none p-4
-          bg-[#1a1a1a]
-          border border-[#262626]
-          text-white
-          focus:outline-none
-        "
-            />
-
-            {/* Buttons */}
-            <div className="flex gap-4">
-                <button
-                    onClick={() => {navigator.clipboard.writeText(result); toast.success("Succès !")}}
-                    className="bg-[#1f1f1f] border border-[#2a2a2a] px-6 py-2 text-white hover:border-green-500 transition"
-                >
-                    Copy
-                </button>
-
-                <button
-                    onClick={() =>
-                        setResult(
-                            generateToken({
-                                uppercase,
-                                lowercase,
-                                numbers,
-                                symbols,
-                                length,
-                            })
-                        )
-                    }
-                    className="bg-[#1f1f1f] border border-[#2a2a2a] px-6 py-2 text-white hover:border-green-500 transition"
-                >
-                    Refresh
-                </button>
-            </div>
+            {Object.entries(conversions).map(([format,value])=>(
+                <div key={format} className="flex rounded-xl overflow-hidden border border-[#2a2a2a] bg-[#131313]">
+                    <div className="px-4 py-3 bg-[#1a1a1a] text-[#cfcfcf] border-r border-[#2a2a2a]">{format}</div>
+                    <input
+                        className="flex-1 px-4 py-3 bg-[#131313] text-white font-mono opacity-80 outline-none"
+                        value={value}
+                        onChange={e=>handleChange(format,e.target.value)}
+                    />
+                    <button
+                        onClick={()=>copyToClipboard(value,format)}
+                        className="px-4 py-3 bg-[#1a1a1a] text-white hover:bg-[#222] border-l border-[#2a2a2a] transition"
+                    >Copier</button>
+                </div>
+            ))}
         </div>
-    );
+    )
 }

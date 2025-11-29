@@ -9,6 +9,16 @@ export default function Home() {
             desc: "Generate random string with custom characters.",
             icon: "🔁",
             path: "/token",
+        },{
+            name: "Color Converter",
+            desc: "Convert colors between different formats (HEX, RGBA).",
+            icon: "🎨",
+            path: "/colors",
+        },{
+            name: "Qr Code Generator",
+            desc: "Generate QR codes with custom text and colors.",
+            icon: "📇",
+            path: "/qrcode",
         },
         // Ajoute d'autres outils ici
     ];

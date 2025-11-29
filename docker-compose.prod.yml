@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  dev-tools-prod:
+    container_name: dev-tools-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5175:5175"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - prod-network
+
+networks:
+  prod-network:
+    driver: bridge
