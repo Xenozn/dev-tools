@@ -1,5 +1,4 @@
 // src/components/Layout/Layout.tsx
-// src/components/Layout/Layout.tsx
 import type {ReactNode} from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';

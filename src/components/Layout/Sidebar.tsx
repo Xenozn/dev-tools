@@ -1,22 +1,27 @@
 // src/components/Layout/Sidebar.tsx
-import { Home, Hash, FileText, Palette, Settings } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {Home, Hash, FileText, Palette, Settings} from 'lucide-react';
+import {useLocation, useNavigate} from 'react-router-dom';
 
-export default function Sidebar() {
+interface SidebarProps {
+    activePage?: string
+}
+
+export default function Sidebar({}: SidebarProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const currentPath = location.pathname.substring(1) || 'home'; // "/token" → "token"
 
     const menuItems = [
-        { id: 'home', label: 'Accueil', icon: Home, path: '/' },
-        { id: 'token', label: 'Token gen', icon: Hash, path: '/token' },
-        { id: 'base64', label: 'Base64', icon: FileText, path: '/base64' },
-        { id: 'colors', label: 'Couleurs', icon: Palette, path: '/colors' },
-        { id: 'settings', label: 'Paramètres', icon: Settings, path: '/settings' },
+        {id: 'home', label: 'Accueil', icon: Home, path: '/'},
+        {id: 'token', label: 'Token gen', icon: Hash, path: '/token'},
+        {id: 'qrcode', label: 'QR Code', icon: FileText, path: '/qrcode'},
+        {id: 'colors', label: 'Couleurs', icon: Palette, path: '/colors'},
+        {id: 'settings', label: 'Paramètres', icon: Settings, path: '/settings'},
     ];
 
     return (
-        <aside className="fixed top-0 left-0 h-screen w-64 bg-[#0f0f0f] text-white flex flex-col border-r border-[#1f1f1f]">
+        <aside
+            className="fixed top-0 left-0 h-screen w-64 bg-[#0f0f0f] text-white flex flex-col border-r border-[#1f1f1f]">
             {/* Logo / Titre */}
             <div className="p-6 border-b border-[#1f1f1f]">
                 <h1 className="text-2xl font-bold text-green-500 mb-1">DevTools</h1>
@@ -44,7 +49,7 @@ export default function Sidebar() {
                                     }
                                     `}
                                 >
-                                    <Icon className="w-5 h-5 shrink-0" />
+                                    <Icon className="w-5 h-5 shrink-0"/>
                                     <span>{item.label}</span>
                                 </button>
                             </li>
