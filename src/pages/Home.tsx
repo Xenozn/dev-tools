@@ -5,7 +5,7 @@ export default function Home() {
     const navigate = useNavigate();
     const tools = [
         {
-            name: "Token generator",
+            name: "Token Generator",
             desc: "Generate random string with custom characters.",
             icon: "🔁",
             path: "/token",
