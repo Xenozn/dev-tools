@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance en cours - DevTools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .spinner {
+            margin: 2rem auto;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .info p {
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+
+        .time {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            p { font-size: 1rem; }
+            .icon { font-size: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🔧</div>
+        <h1>Maintenance en cours</h1>
+        <p>Nous mettons à jour DevTools pour vous offrir une meilleure expérience.</p>
+        
+        <div class="spinner"></div>
+        
+        <div class="info">
+            <p>⏱️ Temps estimé : <span class="time">~2 minutes</span></p>
+            <p>🚀 Déploiement en cours...</p>
+            <p>💡 Le site sera de retour très bientôt !</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh toutes les 5 secondes pour vérifier si le site est de retour
+        setTimeout(() => {
+            fetch('/')
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                })
+                .catch(() => {
+                    // Réessayer
+                    setTimeout(arguments.callee, 5000);
+                });
+        }, 5000);
+    </script>
+</body>
+</html>
